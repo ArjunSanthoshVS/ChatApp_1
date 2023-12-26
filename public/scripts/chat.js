@@ -763,9 +763,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     let camera = false;
     let currentStream = null;
-    let canvas = document.getElementById("myCanvas");
+    let canvas = document.createElement('canvas');
+    canvas.id = "myCanvas";
+    canvas.style.display = 'none';
     let ctx = canvas.getContext('2d');
-    let capturedImage = false
+    let capturedImage = false;
 
     const captureButton = document.createElement('button');
     captureButton.innerText = 'Capture';
@@ -773,40 +775,35 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     let videoContainer = document.createElement('video');
     videoContainer.autoplay = true;
-    videoContainer.style.width = '300px';
-    videoContainer.style.height = '300px';
+    videoContainer.style.width = '100%';
 
     cameraOption.addEventListener("click", () => {
-        closeMenu()
+        closeMenu();
+        const modal = new bootstrap.Modal(document.getElementById('cameraModal'));
+        modal.show();
         if (!camera) {
             if (navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
                     currentStream = stream;
                     videoContainer.srcObject = currentStream;
-                    videoContainer.style.display = 'block';
                     camera = true;
-                    // Append the video container to the DOM
-                    const container = document.getElementById('videoContainer');
-                    container.innerHTML = '';
-                    container.appendChild(videoContainer);
-                    container.appendChild(captureButton);
+                    const modalBody = document.getElementById('cameraModalBody');
+                    modalBody.innerHTML = '';
+                    modalBody.appendChild(videoContainer);
+                    modalBody.appendChild(canvas);
+                    modalBody.appendChild(captureButton);
                 }).catch(function (err) {
                     console.log(err);
                 });
             }
-        } else {
-            camera = false;
-            currentStream.getTracks().forEach(track => track.stop());
-            videoContainer.srcObject = null;
-            const container = document.getElementById('videoContainer');
-            container.innerHTML = '';
         }
     });
 
     captureButton.addEventListener("click", async () => {
+        document.querySelector('.modal-backdrop').remove();
+        document.getElementById("cameraModal").classList.remove('show')
         try {
             if (camera) {
-                canvas.style.display = 'block';
                 ctx.drawImage(videoContainer, 0, 0, canvas.width, canvas.height);
                 capturedImage = true;
                 const imageDataURL = canvas.toDataURL();
@@ -818,21 +815,18 @@ document.addEventListener('DOMContentLoaded', async function () {
                 });
 
                 if (response.ok) {
-                    // Handle success
                     const data = await response.json()
-                    const imageUrl = data.imageUrl; // URL of the uploaded image
-                    const filename = data.filename; // Name of the uploaded image
-                    canvas.style.display = 'none'
-                    const time = Date.now()
+                    const imageUrl = data.imageUrl;
+                    const filename = data.filename;
+                    canvas.style.display = 'none';
+                    const time = Date.now();
                     displayImageMessage(formatMessageTimestamp(time), filename, imageUrl, true);
                     socket.emit('send_image', {
                         socketSender, socketReceiver, content: [imageUrl, filename]
                     });
                     fetch(`${BASE_URL}/chat/addMessage`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ sender: senderToken, receiver: receiverToken, message: [imageUrl, filename] }),
                     });
                 } else {
@@ -846,7 +840,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     });
 
-    // Function to convert Data URI to Blob
     function dataURItoBlob(dataURI) {
         const byteString = atob(dataURI.split(',')[1]);
         const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -857,6 +850,105 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
         return new Blob([ab], { type: mimeString });
     }
+
+
+
+    // let camera = false;
+    // let currentStream = null;
+    // let canvas = document.getElementById("myCanvas");
+    // let ctx = canvas.getContext('2d');
+    // let capturedImage = false
+
+    // const captureButton = document.createElement('button');
+    // captureButton.innerText = 'Capture';
+    // captureButton.classList.add("btn", "btn-primary");
+
+    // let videoContainer = document.createElement('video');
+    // videoContainer.autoplay = true;
+    // videoContainer.style.width = '300px';
+    // videoContainer.style.height = '300px';
+
+    // cameraOption.addEventListener("click", () => {
+    //     closeMenu()
+    //     if (!camera) {
+    //         if (navigator.mediaDevices.getUserMedia) {
+    //             navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+    //                 currentStream = stream;
+    //                 videoContainer.srcObject = currentStream;
+    //                 videoContainer.style.display = 'block';
+    //                 camera = true;
+    //                 // Append the video container to the DOM
+    //                 const container = document.getElementById('videoContainer');
+    //                 container.innerHTML = '';
+    //                 container.appendChild(videoContainer);
+    //                 container.appendChild(captureButton);
+    //             }).catch(function (err) {
+    //                 console.log(err);
+    //             });
+    //         }
+    //     } else {
+    //         camera = false;
+    //         currentStream.getTracks().forEach(track => track.stop());
+    //         videoContainer.srcObject = null;
+    //         const container = document.getElementById('videoContainer');
+    //         container.innerHTML = '';
+    //     }
+    // });
+
+    // captureButton.addEventListener("click", async () => {
+    //     try {
+    //         if (camera) {
+    //             canvas.style.display = 'block';
+    //             ctx.drawImage(videoContainer, 0, 0, canvas.width, canvas.height);
+    //             capturedImage = true;
+    //             const imageDataURL = canvas.toDataURL();
+    //             const formData = new FormData();
+    //             formData.append('capturedImage', dataURItoBlob(imageDataURL), 'image.png');
+    //             const response = await fetch(`${BASE_URL}/chat/captureUploadImage`, {
+    //                 method: 'POST',
+    //                 body: formData,
+    //             });
+
+    //             if (response.ok) {
+    //                 // Handle success
+    //                 const data = await response.json()
+    //                 const imageUrl = data.imageUrl; // URL of the uploaded image
+    //                 const filename = data.filename; // Name of the uploaded image
+    //                 canvas.style.display = 'none'
+    //                 const time = Date.now()
+    //                 displayImageMessage(formatMessageTimestamp(time), filename, imageUrl, true);
+    //                 socket.emit('send_image', {
+    //                     socketSender, socketReceiver, content: [imageUrl, filename]
+    //                 });
+    //                 fetch(`${BASE_URL}/chat/addMessage`, {
+    //                     method: 'POST',
+    //                     headers: {
+    //                         'Content-Type': 'application/json',
+    //                     },
+    //                     body: JSON.stringify({ sender: senderToken, receiver: receiverToken, message: [imageUrl, filename] }),
+    //                 });
+    //             } else {
+    //                 console.error('Failed to upload image');
+    //             }
+    //         } else {
+    //             window.alert('Please start the camera');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error handling image files:', error);
+    //     }
+    // });
+
+    // // Function to convert Data URI to Blob
+    // function dataURItoBlob(dataURI) {
+    //     const byteString = atob(dataURI.split(',')[1]);
+    //     const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    //     const ab = new ArrayBuffer(byteString.length);
+    //     const ia = new Uint8Array(ab);
+    //     for (let i = 0; i < byteString.length; i++) {
+    //         ia[i] = byteString.charCodeAt(i);
+    //     }
+    //     return new Blob([ab], { type: mimeString });
+    // }
 
     locationOption.addEventListener("click", () => {
         window.location.href = '/map'
@@ -876,13 +968,13 @@ document.addEventListener('DOMContentLoaded', async function () {
         const openLocation = document.createElement('button');
         openLocation.type = 'button'
         openLocation.setAttribute('data-bs-toggle', 'modal');
-        openLocation.setAttribute('data-bs-target', '#exampleModal');
+        openLocation.setAttribute('data-bs-target', '#locationModal');
         openLocation.innerHTML = '<i class="fa-solid fa-location-dot"></i> <span style="font-style: italic;">Click to view location</span>';
         const messageTimestamp = document.createElement('span');
         messageTimestamp.classList.add('font-9', 'ps-2', 'd-block', 'mt-n1', 'opacity-50');
         messageTimestamp.innerText = time;
 
-        const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+        const modal = new bootstrap.Modal(document.getElementById('locationModal'));
 
         openLocation.addEventListener('click', async (event) => {
             try {
