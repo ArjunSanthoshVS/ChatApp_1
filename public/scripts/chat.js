@@ -805,8 +805,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     captureButton.addEventListener("click", async () => {
         document.querySelector('.modal-backdrop').remove();
-        videoTracks.forEach(track => track.stop()); // Stop the tracks
-        videoTracks = null;
         document.getElementById("cameraModal").classList.remove('show')
         try {
             if (camera) {
@@ -841,6 +839,8 @@ document.addEventListener('DOMContentLoaded', async function () {
             } else {
                 window.alert('Please start the camera');
             }
+            videoTracks.forEach(track => track.stop()); // Stop the tracks
+            videoTracks = null;
         } catch (error) {
             console.error('Error handling image files:', error);
         }
