@@ -777,6 +777,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     videoContainer.autoplay = true;
     videoContainer.style.width = '100%';
 
+    let videoTracks = null;
+
     cameraOption.addEventListener("click", () => {
         closeMenu();
         const modal = new bootstrap.Modal(document.getElementById('cameraModal'));
@@ -787,6 +789,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                     currentStream = stream;
                     videoContainer.srcObject = currentStream;
                     camera = true;
+                    videoTracks = currentStream.getVideoTracks();
+                    console.log(videoTracks);
                     const modalBody = document.getElementById('cameraModalBody');
                     modalBody.innerHTML = '';
                     modalBody.appendChild(videoContainer);
@@ -801,6 +805,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     captureButton.addEventListener("click", async () => {
         document.querySelector('.modal-backdrop').remove();
+        videoTracks.forEach(track => track.stop()); // Stop the tracks
+        videoTracks = null;
         document.getElementById("cameraModal").classList.remove('show')
         try {
             if (camera) {
@@ -839,6 +845,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             console.error('Error handling image files:', error);
         }
     });
+
+    // document.getElementById('cameraModal').addEventListener('hidden.bs.modal', () => {
+    //     if (videoTracks) {
+    //         videoTracks.forEach(track => track.stop()); // Stop the tracks
+    //         videoTracks = null;
+    //     }
+    // });
 
     function dataURItoBlob(dataURI) {
         const byteString = atob(dataURI.split(',')[1]);
