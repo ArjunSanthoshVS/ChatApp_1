@@ -7,9 +7,13 @@
     <link rel="stylesheet" href="styles/chatStyle.css">
     <title>Chat System</title>
     
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <!-- <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>
         const socket = io.connect('http://localhost:3000');
+    </script> -->
+    <script src="https://chat-service-fhbc.onrender.com/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io.connect('https://chat-service-fhbc.onrender.com');
     </script>
 </head>
 

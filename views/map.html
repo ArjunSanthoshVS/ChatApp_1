@@ -10,10 +10,14 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script src="https://chat-service-fhbc.onrender.com/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io.connect('https://chat-service-fhbc.onrender.com');
+    </script>
+    <!-- <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>
         const socket = io.connect('http://localhost:3000');
-    </script>
+    </script> -->
 
     <style>
         body {
