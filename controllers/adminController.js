@@ -4,6 +4,7 @@ const { Room } = require('../models/roomSchema');
 const { Member } = require('../models/memberSchema');
 const { Chat } = require('../models/chatSchema');
 const BASE_URL = process.env.BASE_URL;
+// const BASE_URL = "http://localhost:3000";
 
 module.exports = {
     // sendLink: async (req, res) => {
@@ -208,7 +209,7 @@ module.exports = {
             const newMember = await Member.create({ number: whatsappNumber });
 
             // Create a Room referencing the created Member's _id
-            const newRoom = await Room.create({ user: newMember._id, admin: process.env.ADMIN_ID });
+            // const newRoom = await Room.create({ user: newMember._id, admin: process.env.ADMIN_ID });
 
             const roomId = newMember._id;
             const link = `${BASE_URL}/chat?roomId=${roomId}`;
@@ -227,7 +228,7 @@ module.exports = {
             const response = await axios.post(apiUrl, messagePayload);
 
             console.log('Message sent:', response);
-            res.status(200).json({ message: 'Message sent successfully' });
+            res.status(200).json({ response, message: 'Message sent successfully' });
 
         } catch (error) {
             console.error('Error sending message:', error);

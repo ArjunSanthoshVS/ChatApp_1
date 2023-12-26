@@ -396,6 +396,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     const cameraOption = document.getElementById("cameraOption")
     const locationOption = document.getElementById("locationOption")
 
+    const closeMenu = () => {
+        document.getElementById("menu-upload").classList.remove("menu-active");
+        const menuHider = document.querySelector('.menu-hider');
+        if (menuHider.classList.contains('menu-active')) {
+            menuHider.classList.remove('menu-active');
+        }
+    }
+
     // Update the function to handle file selection and sending PDF
     fileOption.addEventListener("click", () => {
         const input = document.createElement('input');
@@ -405,6 +413,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Set an event listener for when a file is selected
         input.addEventListener('change', async (event) => {
             const file = event.target.files[0]; // Get the selected file
+            closeMenu()
             if (file) {
                 try {
                     const reader = new FileReader();
@@ -519,7 +528,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         input.addEventListener('change', async (event) => {
             const files = event.target.files;
-
+            closeMenu()
             if (files && files.length > 0) {
                 try {
                     const formData = new FormData();
@@ -641,7 +650,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         input.addEventListener('change', async (event) => {
             const files = event.target.files;
-
+            closeMenu()
             if (files && files.length > 0) {
                 try {
                     const formData = new FormData();
@@ -768,6 +777,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     videoContainer.style.height = '300px';
 
     cameraOption.addEventListener("click", () => {
+        closeMenu()
         if (!camera) {
             if (navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
