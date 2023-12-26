@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function () {
-    const BASE_URL = process.env.BASE_URL;
+    const BASE_URL = "https://chat-service-fhbc.onrender.com";
+    // const BASE_URL = "http://localhost:3000";
 
     let peer = new Peer();
     let myStream;
