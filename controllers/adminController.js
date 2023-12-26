@@ -3,7 +3,7 @@ const axios = require('axios');
 const { Room } = require('../models/roomSchema');
 const { Member } = require('../models/memberSchema');
 const { Chat } = require('../models/chatSchema');
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = process.env.BASE_URL;
 
 module.exports = {
     // sendLink: async (req, res) => {
