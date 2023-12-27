@@ -281,7 +281,7 @@ module.exports = {
                         try {
                             if (room) {
                                 await Room.findByIdAndUpdate(room._id, { lastMessage: data._id });
-                                return res.json({ msg: "Message added successfully." });
+                                return res.json({ data, msg: "Message added successfully." });
                             } else {
                                 return res.status(404).json({ msg: "Room not found." });
                             }

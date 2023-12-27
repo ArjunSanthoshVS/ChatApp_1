@@ -209,7 +209,7 @@ module.exports = {
             const newMember = await Member.create({ number: whatsappNumber });
 
             // Create a Room referencing the created Member's _id
-            // const newRoom = await Room.create({ user: newMember._id, admin: process.env.ADMIN_ID });
+            const newRoom = await Room.create({ user: newMember._id, admin: process.env.ADMIN_ID });
 
             const roomId = newMember._id;
             const link = `${BASE_URL}/chat?roomId=${roomId}`;
@@ -227,8 +227,11 @@ module.exports = {
             const apiUrl = process.env.WHATSAPP_API_URL;
             const response = await axios.post(apiUrl, messagePayload);
 
-            console.log('Message sent:', response);
-            res.status(200).json({ response, message: 'Message sent successfully' });
+            console.log('Message sent:', response.data); // Log only necessary data
+
+            // Send a simplified response without circular references
+            res.status(200).json({ message: 'Message sent successfully', responseData: response.data });
+            
 
         } catch (error) {
             console.error('Error sending message:', error);

@@ -1084,8 +1084,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
         const data = await response.json()
         console.log(data);
-        displayCall(formatMessageTimestamp(time), data.callId, "Video Call", true);
-        socket.emit('send_video_call', { socketSender, socketReceiver, callId: data.callId, message: "Video Call" });
+        displayCall(formatMessageTimestamp(time), data.data._id, "Video Call", true);
+        socket.emit('send_video_call', { socketSender, socketReceiver, callId: data.data._id, message: "Video Call" });
     })
 
     socket.on('receive_video_call', ({ senderToken, callId, message }) => {
@@ -1104,8 +1104,9 @@ document.addEventListener('DOMContentLoaded', async function () {
             body: JSON.stringify({ sender: senderToken, receiver: receiverToken, message: "Audio Call" }),
         });
         const data = await response.json()
-        displayCall(formatMessageTimestamp(time), data.callId, "Audio Call", true);
-        socket.emit('send_audio_call', { socketSender, socketReceiver, callId: data.callId, message: "Audio Call" });
+        console.log(data);
+        displayCall(formatMessageTimestamp(time), data.data._id, "Audio Call", true);
+        socket.emit('send_audio_call', { socketSender, socketReceiver, callId: data.data._id, message: "Audio Call" });
     })
 
     socket.on('receive_audio_call', ({ senderToken, callId, message }) => {
@@ -1122,14 +1123,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (message === "Video Call") {
             openCall.innerHTML = `<i class="fa-solid fa-video"></i> <span style="font-style: italic;">${message}</span>`;
             openCall.addEventListener('click', async () => {
-                await fetch(`${BASE_URL}/chat/updateEnteredUsers?callId=${callId}&user=${senderToken}&type=video`)
-                window.location.href = `/call?video=${callId}`;
+                const response = await fetch(`${BASE_URL}/chat/updateEnteredUsers?callId=${callId}&user=${senderToken}&type=video`)
+                if (response?.status === 200) {
+                    window.location.href = `/call?video=${callId}`;
+                }
             });
         } else {
             openCall.innerHTML = `<i class="fa-solid fa-phone"></i> <span style="font-style: italic;">${message}</span>`;
-            openCall.addEventListener('click', () => {
-                fetch(`${BASE_URL}/chat/updateEnteredUsers?callId=${callId}&user=${senderToken}&type=audio`)
-                window.location.href = `/call?audio=${callId}`;
+            openCall.addEventListener('click', async () => {
+                const response = await fetch(`${BASE_URL}/chat/updateEnteredUsers?callId=${callId}&user=${senderToken}&type=audio`)
+                if (response?.status === 200) {
+                    window.location.href = `/call?audio=${callId}`;
+                }
             });
         }
 

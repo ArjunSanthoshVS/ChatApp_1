@@ -130,11 +130,11 @@ module.exports = {
             });
 
             socket.on('send_audio_call', (data) => {
-                const { socketSender, socketReceiver, message } = data;
+                const { socketSender, socketReceiver, callId, message } = data;
                 const senderSocketId = memberTokens[socketSender];
                 const receiverSocketId = memberTokens[socketReceiver];
                 if (senderSocketId || receiverSocketId) {
-                    socket.to(receiverSocketId).emit('receive_audio_call', { socketSender, message });
+                    socket.to(receiverSocketId).emit('receive_audio_call', { socketSender, callId, message });
                 } else {
                     console.log('Sender or receiver not found');
                 }
