@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const BASE_URL = "https://chat-service-fhbc.onrender.com";
     // const BASE_URL = "http://localhost:3000";
-
     const socket = io();
 
     const socketSender = localStorage.getItem("socketSender")
@@ -10,23 +9,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const receiverToken = localStorage.getItem("receiverToken")
 
     const map = L.map('map');
-    // Initializes map
-
     map.setView([51.505, -0.09], 13);
-    // Sets initial coordinates and zoom level
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap'
     }).addTo(map);
-    // Sets map data source and associates with map
 
     let marker, circle, zoomed, lat, lng, accuracy;
 
-    navigator.geolocation.getCurrentPosition(success, error);
     function success(pos) {
-
-        console.log(pos);
         lat = pos.coords.latitude;
         lng = pos.coords.longitude;
         accuracy = pos.coords.accuracy;
@@ -35,26 +27,20 @@ document.addEventListener('DOMContentLoaded', function () {
             map.removeLayer(marker);
             map.removeLayer(circle);
         }
-        // Removes any existing marker and circule (new ones about to be set)
 
         marker = L.marker([lat, lng]).addTo(map);
         circle = L.circle([lat, lng], { radius: accuracy }).addTo(map);
-        // Adds marker to the map and a circle for accuracy
 
         if (!zoomed) {
             zoomed = map.fitBounds(circle.getBounds());
         }
-        // Set zoom to boundaries of accuracy circle
 
         map.setView([lat, lng]);
-        // Set map focus to current user position
 
-        console.log("Your coordinate is: Lat: " + lat + " Long: " + lng + " Accuracy: " + accuracy)
-        // console.log(`https://www.google.com/maps/search/?api=1&query=${lat}%2C${lng}`);
+        console.log("Your coordinate is: Lat: " + lat + " Long: " + lng + " Accuracy: " + accuracy);
     }
 
     function error(err) {
-
         if (err.code === 1) {
             alert("Please allow geolocation access");
         } else {
@@ -75,4 +61,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         window.history.go(-1)
     })
-})
+
+    // Request location access when the page loads
+    navigator.permissions.query({ name: 'geolocation' }).then(function (result) {
+        if (result.state === 'granted') {
+            navigator.geolocation.getCurrentPosition(success, error);
+        } else if (result.state === 'prompt') {
+            navigator.geolocation.getCurrentPosition(success, error);
+        } else if (result.state === 'denied') {
+            error({ code: 1 });
+        }
+    });
+});
