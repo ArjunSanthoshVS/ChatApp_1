@@ -31,11 +31,15 @@ module.exports = {
             if (room === null) {
                 room = await Room.findOne({ _id: roomId });
             }
-            res.status(200).json(room);
+            if (!room) {
+                return res.status(500).json({ message: "Can't find the room...!" });
+            }
+            return res.status(200).json(room);
         } catch (error) {
-            res.status(500).json({ message: "Can't find the room...!" });
+            return res.status(500).json({ message: "Can't find the room...!" });
         }
     },
+    
 
     // roomDetails: async (req, res) => {
     //     try {
@@ -380,17 +384,14 @@ module.exports = {
         try {
             const userId = req.query.userId;
             console.log(userId);
-            const updatedRoom = await Room.findOneAndUpdate(
-                { user: userId },
-                { $set: { status: "Terminated" } },
-                { new: true }
-            );
-
+            const updatedRoom = await Room.deleteOne({ user: userId })
+            await Member.deleteOne({ _id: userId })
+            await Chat.deleteMany({ users: { $elemMatch: { $eq: userId } } })
             if (!updatedRoom) {
                 return res.status(404).json({ message: "Room not found for the given user" });
             }
 
-            return res.status(200).json({ message: "Chat destroyed successfully", room: updatedRoom });
+            return res.status(200).json({ message: "Chat destroyed successfully" });
         } catch (error) {
             console.error('Error destroying chat:', error);
             return res.status(500).json({ message: "Can't destroy chat..." });

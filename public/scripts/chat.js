@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         .then(response => response.json())
         .then(data => {
             console.log(data, "hjgd");
+            if (data.message) {
+                window.location.href = '/error'
+            }
 
             adminToken = data._id;
             if (userToken === data.user) {

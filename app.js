@@ -42,6 +42,10 @@ app.get('/map', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'map.html'));
 });
 
+app.get('/error', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'error.hbs'));
+});
+
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
