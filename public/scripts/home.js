@@ -1,7 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
-  // const BASE_URL = "http://localhost:3000";
-  const BASE_URL = "https://chat-service-fhbc.onrender.com";
+  const BASE_URL = "http://localhost:3000";
+  // const BASE_URL = "https://chat-service-fhbc.onrender.com";
 
   // const socket = io();
 

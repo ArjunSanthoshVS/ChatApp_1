@@ -27,7 +27,8 @@ module.exports = {
         try {
             let room;
             const roomId = req.query.roomId; // Extract roomId from query parameters
-            room = await Room.findOne({ user: roomId }); // Adjust your query to match the room ID
+            const ip = req.query.ip; // Extract roomId from query parameters
+            room = await Room.findOne({ user: roomId, ip: ip }); // Adjust your query to match the room ID
             if (room === null) {
                 room = await Room.findOne({ _id: roomId });
             }
@@ -39,7 +40,7 @@ module.exports = {
             return res.status(500).json({ message: "Can't find the room...!" });
         }
     },
-    
+
 
     // roomDetails: async (req, res) => {
     //     try {
@@ -79,14 +80,20 @@ module.exports = {
     specificRoomOfUser: async (req, res) => {
         try {
             const roomId = req.query.roomId;
-            const room = await Room.findOneAndUpdate(
-                { user: roomId },
-                { $set: { userEntered: true } },
-                { new: true }
-            ).lean();
+            const room = await Room.findOneAndUpdate({ user: roomId }).lean();
 
             if (!room) {
                 return res.status(404).json({ message: "Room not found" });
+            }
+
+            if (!room.ip) {
+                const publicIpModule = await import('public-ip');
+                const ipAddress = await publicIpModule.publicIpv4();
+
+                await Room.findOneAndUpdate(
+                    { user: roomId },
+                    { $set: { ip: ipAddress } }
+                );
             }
 
             const [AdminMobile, UserMobile] = await Promise.all([
@@ -96,9 +103,10 @@ module.exports = {
 
             res.status(200).json({ room, AdminMobile, UserMobile });
         } catch (error) {
-            res.status(500).json({ message: "Can't find the room" });
+            res.status(500).json({ message: "Error finding the room" });
         }
     },
+
 
     specificRoomOfAdmin: async (req, res) => {
         try {

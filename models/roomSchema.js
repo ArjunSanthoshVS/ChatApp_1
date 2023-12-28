@@ -45,9 +45,9 @@ const roomSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Chat",
     },
-    userEntered: {
-        type: Boolean,
-        default: false
+    ip: {
+        type: String,
+        default: null
     }
 },
     {

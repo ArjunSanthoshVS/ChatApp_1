@@ -1,7 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', async function () {
-    const BASE_URL = "https://chat-service-fhbc.onrender.com";
-    // const BASE_URL = "http://localhost:3000";
+    // const BASE_URL = "https://chat-service-fhbc.onrender.com";
+    const BASE_URL = "http://localhost:3000";
 
     //Initializing all variables
     const socket = io();
@@ -19,11 +19,22 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.log(token);
     userToken = token
 
+    const getIPv4Addresses = async () => {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip; // Return the IP address from the function
+        } catch (error) {
+            console.error('Error fetching IP address:', error);
+        }
+    };
+
+    const userIp = await getIPv4Addresses()
+
     // fetching the fulll room details by using the url
-    fetch(`${BASE_URL}/chat/roomDetails?roomId=${token}`)
+    fetch(`${BASE_URL}/chat/roomDetails?roomId=${token}&ip=${userIp}`)
         .then(response => response.json())
-        .then(data => {
-            console.log(data, "hjgd");
+        .then(async data => {
             if (data.message) {
                 window.location.href = '/error'
             }
@@ -48,7 +59,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             // Checking that who is entering the website. Is that user or Admin
             if (userToken === data.user) {
-                fetch(`${BASE_URL}/chat/specificRoomOfUser?roomId=${token}`)
+                const result = await getIPv4Addresses()
+                localStorage.setItem("ipAddress", result)
+                await fetch(`${BASE_URL}/chat/specificRoomOfUser?roomId=${token}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
@@ -101,6 +114,10 @@ document.addEventListener('DOMContentLoaded', async function () {
                     });
             }
         })
+
+
+
+
 
     // Getting the input field to make the typing indicator
     const messageInput = document.querySelector('.form-control');
@@ -314,18 +331,22 @@ document.addEventListener('DOMContentLoaded', async function () {
     arrowUpIcon.addEventListener('click', function () {
         const messageInput = document.querySelector('.form-control');
         const message = messageInput.value.trim();
-        const time = Date.now()
-        displayMessage(formatMessageTimestamp(time), message, true);
-        fetch(`${BASE_URL}/chat/addMessage`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ sender: senderToken, receiver: receiverToken, message: message }),
-        });
-        // after setting the message in database emiting the message to the receiver through socket.io
-        socket.emit('send_message', { socketSender, socketReceiver, message });
-        messageInput.value = '';
+        if (message !== '') {
+            const time = Date.now()
+            displayMessage(formatMessageTimestamp(time), message, true);
+            fetch(`${BASE_URL}/chat/addMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ sender: senderToken, receiver: receiverToken, message: message }),
+            });
+            // after setting the message in database emiting the message to the receiver through socket.io
+            socket.emit('send_message', { socketSender, socketReceiver, message });
+            messageInput.value = '';
+        } else {
+            messageInput.value = '';
+        }
     });
 
     // socket handler for receiving the message
@@ -333,7 +354,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         const time = Date.now()
         displayMessage(formatMessageTimestamp(time), message, false);
     });
-
 
     // function for display the message with its same style in html file
     function displayMessage(time, message, isSelf) {
