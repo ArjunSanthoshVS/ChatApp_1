@@ -1,4 +1,5 @@
 const socketIO = require('socket.io');
+const { Room } = require('../models/roomSchema');
 
 let io;
 
@@ -11,14 +12,43 @@ module.exports = {
         io.on('connection', (socket) => {
             console.log('Socket Connected');
 
+            let disconnectTimeout;
+            let userToken;
+            const handleDisconnect = async () => {
+                try {
+                    if (!userToken) {
+                        console.error('User token not found');
+                        return;
+                    }
+
+                    const room = await Room.findOne({ user: userToken }).lean();
+                    if (!room) {
+                        console.error("Can't find the room...!");
+                        return;
+                    }
+
+                    await Room.findOneAndUpdate(
+                        { user: userToken },
+                        { $set: { userEntered: true } },
+                        { new: true }
+                    );
+
+                    console.log(`User ${userToken} has left and 'userEntered' is set to 'true'.`);
+                } catch (error) {
+                    console.error('Error updating userEntered field:', error);
+                }
+            };
+
+
             socket.on('join_room', (data) => {
                 const { token, room } = data;
                 if (token === room._id) {
                     console.log('Admin connected');
                     memberTokens[token] = socket.id;
                 } else if (token === room.user) {
+                    userToken = token
                     console.log('User connected');
-                    memberTokens[token] = socket.id; // Store user's token with socket id
+                    memberTokens[token] = socket.id;
                 } else {
                     console.log('Localhost Connected');
                     memberTokens[token] = socket.id;
@@ -142,6 +172,12 @@ module.exports = {
 
             socket.on('disconnect', () => {
                 console.log('Socket Disconnected');
+                clearTimeout(disconnectTimeout);
+                disconnectTimeout = setTimeout(handleDisconnect, 5000); // Adjust the timeout as needed
+            });
+
+            socket.on('refresh', () => {
+                clearTimeout(disconnectTimeout);
             });
         });
     },

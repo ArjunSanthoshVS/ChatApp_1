@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.log(token);
     userToken = token
 
+    window.addEventListener('beforeunload', () => {
+        socket.emit('refresh');
+    });
+    
     const getIPv4Addresses = async () => {
         try {
             const response = await fetch('https://api.ipify.org?format=json');
@@ -28,8 +32,8 @@ document.addEventListener('DOMContentLoaded', async function () {
             console.error('Error fetching IP address:', error);
         }
     };
-
     const userIp = await getIPv4Addresses()
+console.log(userIp);
 
     // fetching the fulll room details by using the url
     fetch(`${BASE_URL}/chat/roomDetails?roomId=${token}&ip=${userIp}`)
@@ -65,6 +69,9 @@ document.addEventListener('DOMContentLoaded', async function () {
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
+                        if (data.message) {
+                            window.location.href = '/error'
+                        }
                         receiverToken = data?.room?.admin;
                         senderToken = data?.room?.user;
                         socketSender = data?.room?.user
