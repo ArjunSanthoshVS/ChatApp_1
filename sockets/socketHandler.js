@@ -2,7 +2,8 @@ const socketIO = require('socket.io');
 const { Room } = require('../models/roomSchema');
 
 let io;
-
+let isRefreshing = false;
+let userLeft = false;
 const memberTokens = {};
 
 module.exports = {
@@ -27,11 +28,11 @@ module.exports = {
                         return;
                     }
 
-                    await Room.findOneAndUpdate(
-                        { user: userToken },
-                        { $set: { userEntered: true } },
-                        { new: true }
-                    );
+                    // await Room.findOneAndUpdate(
+                    //     { user: userToken },
+                    //     { $set: { userEntered: true } },
+                    //     { new: true }
+                    // );
 
                     console.log(`User ${userToken} has left and 'userEntered' is set to 'true'.`);
                 } catch (error) {
@@ -172,13 +173,25 @@ module.exports = {
 
             socket.on('disconnect', () => {
                 console.log('Socket Disconnected');
-                clearTimeout(disconnectTimeout);
-                disconnectTimeout = setTimeout(handleDisconnect, 5000); // Adjust the timeout as needed
+                userLeft = true; // Set the userLeft flag on disconnection
+                console.log(userLeft,'userLeft');
+                setTimeout(() => {
+                    if (!isRefreshing && userLeft) {
+                        console.log('userLeft 1');
+                          handleDisconnect();
+                    } else {
+                        console.log('userLeft 2');
+                        isRefreshing = false;
+                    }
+                    console.log('userLeft 3');
+                    userLeft = false; // Reset userLeft flag
+                }, 1000); // Set a delay of 1 second
             });
-
+            
             socket.on('refresh', () => {
-                clearTimeout(disconnectTimeout);
-                console.log(disconnectTimeout);
+                isRefreshing = true;
+                clearTimeout(disconnectTimeout); // Clear the disconnect timeout on refresh
+                console.log('Refresh Detected',isRefreshing);
             });
         });
     },
