@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     window.addEventListener('beforeunload', () => {
         socket.emit('refresh');
     });
-    
+
     const getIPv4Addresses = async () => {
         try {
             const response = await fetch('https://api.ipify.org?format=json');
@@ -33,10 +33,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     };
     const userIp = await getIPv4Addresses()
-console.log(userIp);
+    console.log(userIp);
 
     // fetching the fulll room details by using the url
-    fetch(`${BASE_URL}/chat/roomDetails?roomId=${token}&ip=${userIp}`)
+    fetch(`${BASE_URL}/chat/roomDetails?roomId=${token}`)
         .then(response => response.json())
         .then(async data => {
             if (data.message) {
@@ -63,9 +63,7 @@ console.log(userIp);
 
             // Checking that who is entering the website. Is that user or Admin
             if (userToken === data.user) {
-                const result = await getIPv4Addresses()
-                localStorage.setItem("ipAddress", result)
-                await fetch(`${BASE_URL}/chat/specificRoomOfUser?roomId=${token}`)
+                await fetch(`${BASE_URL}/chat/specificRoomOfUser?roomId=${token}&ip=${userIp}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);

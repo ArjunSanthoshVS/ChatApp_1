@@ -27,9 +27,9 @@ module.exports = {
         try {
             let room;
             const roomId = req.query.roomId; // Extract roomId from query parameters
-            const ip = req.query.ip;
-            console.log(ip);// Extract roomId from query parameters
+
             room = await Room.findOne({ user: roomId }); // Adjust your query to match the room ID
+
             if (room === null) {
                 room = await Room.findOne({ _id: roomId });
             }
@@ -81,6 +81,8 @@ module.exports = {
     specificRoomOfUser: async (req, res) => {
         try {
             const roomId = req.query.roomId;
+            const ip = req.query.ip;
+
             const room = await Room.findOne({ user: roomId }).lean();
 
             if (!room || room.userEntered) {
@@ -95,6 +97,8 @@ module.exports = {
                     { user: roomId },
                     { $set: { ip: ipAddress } }
                 );
+            } else if (room.ip !== ip) {
+                return res.status(500).json({ message: "Error finding the room" });
             }
 
             const [AdminMobile, UserMobile] = await Promise.all([

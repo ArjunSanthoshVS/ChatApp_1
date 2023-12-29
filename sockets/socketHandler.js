@@ -178,6 +178,7 @@ module.exports = {
 
             socket.on('refresh', () => {
                 clearTimeout(disconnectTimeout);
+                console.log(disconnectTimeout);
             });
         });
     },
