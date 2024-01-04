@@ -364,11 +364,11 @@ module.exports = {
                 return;
             }
 
-            // await Room.findOneAndUpdate(
-            //     { user: userToken },
-            //     { $set: { userEntered: true } },
-            //     { new: true }
-            // );
+            await Room.findOneAndUpdate(
+                { user: userToken },
+                { $set: { userEntered: true, status: "Archived" } },
+                { new: true }
+            );
 
             console.log(`User ${userToken} has left and 'userEntered' is set to 'true'.`);
         } catch (error) {
