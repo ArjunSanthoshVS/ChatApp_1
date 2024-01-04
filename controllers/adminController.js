@@ -231,7 +231,7 @@ module.exports = {
 
             // Send a simplified response without circular references
             res.status(200).json({ message: 'Message sent successfully', responseData: response.data });
-            
+
 
         } catch (error) {
             console.error('Error sending message:', error);
@@ -348,6 +348,33 @@ module.exports = {
             res.status(500).json({ message: "Internal server error" });
         }
     },
+
+    userLeave: async (req, res) => {
+        console.log("djfhjk");
+        const userToken = req.query.userId
+        try {
+            if (!userToken) {
+                console.error('User token not found');
+                return;
+            }
+
+            const room = await Room.findOne({ user: userToken }).lean();
+            if (!room) {
+                console.error("Can't find the room...!");
+                return;
+            }
+
+            // await Room.findOneAndUpdate(
+            //     { user: userToken },
+            //     { $set: { userEntered: true } },
+            //     { new: true }
+            // );
+
+            console.log(`User ${userToken} has left and 'userEntered' is set to 'true'.`);
+        } catch (error) {
+            console.error('Error updating userEntered field:', error);
+        }
+    }
 };
 
 const formattedTime = (timestamp) => {

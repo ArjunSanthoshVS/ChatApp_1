@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const BASE_URL = "https://chat-service-fhbc.onrender.com";
     // const BASE_URL = "http://localhost:3000";
 
-    //Initializing all variables
+    //Initializing all constiables
     const socket = io();
     let receiverMobileNumber;
     let adminToken = null;
@@ -18,15 +18,37 @@ document.addEventListener('DOMContentLoaded', async function () {
     token = urlParams.get("roomId");
     console.log(token);
     userToken = token
-    
-    window.addEventListener('beforeunload', () => {
-        socket.emit('disconnect');
+
+
+    const modal = document.getElementById('myModal');
+    const backBtn = document.getElementById('back_btn');
+
+    backBtn.addEventListener('click', (event) => {
+        modal.style.display = 'block';
+        event.preventDefault();
     });
-    
-    // Emit a 'refresh' event when the page refreshes
-    window.addEventListener('unload', () => {
-        socket.emit('refresh');
+
+    document.getElementById('confirmBtn').addEventListener('click', async () => {
+        try {
+            await fetch(`${BASE_URL}/userLeave?userId=${senderToken}`, {
+                method: 'PUT', 
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+            });
+        } catch (error) {
+            console.error('API call failed:', error);
+        }
+
+        modal.style.display = 'none';
     });
+
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+
     const getIPv4Addresses = async () => {
         try {
             const response = await fetch('https://api.ipify.org?format=json');

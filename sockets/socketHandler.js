@@ -2,43 +2,42 @@ const socketIO = require('socket.io');
 const { Room } = require('../models/roomSchema');
 
 let io;
-let isRefreshing = false;
-let userLeft = false;
 const memberTokens = {};
-
+let userLeft = false;
+let userLeftTimeout;
+let refreshing = false;
 module.exports = {
     init: (server) => {
         io = socketIO(server);
 
-        io.on('connection', (socket) => {
+        io.on('connection', async (socket) => {
             console.log('Socket Connected');
-
             let disconnectTimeout;
             let userToken;
-            const handleDisconnect = async () => {
-                try {
-                    if (!userToken) {
-                        console.error('User token not found');
-                        return;
-                    }
+            // const handleDisconnect = async () => {
+            //     try {
+            //         if (!userToken) {
+            //             console.error('User token not found');
+            //             return;
+            //         }
 
-                    const room = await Room.findOne({ user: userToken }).lean();
-                    if (!room) {
-                        console.error("Can't find the room...!");
-                        return;
-                    }
+            //         const room = await Room.findOne({ user: userToken }).lean();
+            //         if (!room) {
+            //             console.error("Can't find the room...!");
+            //             return;
+            //         }
 
-                    // await Room.findOneAndUpdate(
-                    //     { user: userToken },
-                    //     { $set: { userEntered: true } },
-                    //     { new: true }
-                    // );
+            //         // await Room.findOneAndUpdate(
+            //         //     { user: userToken },
+            //         //     { $set: { userEntered: true } },
+            //         //     { new: true }
+            //         // );
 
-                    console.log(`User ${userToken} has left and 'userEntered' is set to 'true'.`);
-                } catch (error) {
-                    console.error('Error updating userEntered field:', error);
-                }
-            };
+            //         console.log(`User ${userToken} has left and 'userEntered' is set to 'true'.`);
+            //     } catch (error) {
+            //         console.error('Error updating userEntered field:', error);
+            //     }
+            // };
 
 
             socket.on('join_room', (data) => {
@@ -49,6 +48,7 @@ module.exports = {
                 } else if (token === room.user) {
                     userToken = token
                     console.log('User connected');
+                    clearTimeout(disconnectTimeout);
                     memberTokens[token] = socket.id;
                 } else {
                     console.log('Localhost Connected');
@@ -171,28 +171,43 @@ module.exports = {
                 }
             });
 
+            // socket.on('disconnect', (data) => {
+            //     console.log('Disconnect event received:', data);
+            //     const { isRefreshing } = data || {};
+
+            //     if (!isRefreshing && !refreshing) {
+            //         console.log('Socket Disconnected');
+            //         userLeftTimeout = setTimeout(() => {
+            //             if (!userLeft) {
+            //                 handleDisconnect();
+            //             }
+            //             userLeft = false;
+            //         }, 1000);
+            //     } else if (isRefreshing) {
+            //         console.log('Page Refresh Detected');
+            //         refreshing = true;
+            //         // Handle the refresh scenario as needed
+            //         // For instance, prevent calling handleDisconnect()
+            //     }
+            // });
+
             socket.on('disconnect', () => {
-                console.log('Socket Disconnected');
-                userLeft = true; // Set the userLeft flag on disconnection
-                console.log(userLeft,'userLeft');
-                setTimeout(() => {
-                    if (!isRefreshing && userLeft) {
-                        console.log('userLeft 1');
-                          handleDisconnect();
-                    } else {
-                        console.log('userLeft 2');
-                        isRefreshing = false;
-                    }
-                    console.log('userLeft 3');
-                    userLeft = false; // Reset userLeft flag
-                }, 1000); // Set a delay of 1 second
+                console.log("Socket Disconnected by default event");
+                // handleDisconnect(); // Call handleDisconnect when disconnect occurs
             });
-            
-            socket.on('refresh', () => {
-                isRefreshing = true;
-                clearTimeout(disconnectTimeout); // Clear the disconnect timeout on refresh
-                console.log('Refresh Detected',isRefreshing);
-            });
+
+            // socket.on('userDisconnect', (elapsedTime) => {
+            //     console.log("Socket Disconnected", elapsedTime);
+            //     if (elapsedTime === 3) {
+            //         handleDisconnect();
+            //     }
+            //     // Handle additional actions on userDisconnect event if needed
+            // });
+
+            // socket.on('refresh', () => {
+            //     console.log('Refresh Detected');
+            // });
+
         });
     },
     getIO: () => {
@@ -202,3 +217,12 @@ module.exports = {
         return io;
     },
 };
+
+// const checkRefresh = () => {
+//     return new Promise((resolve, reject) => {
+//         setTimeout(() => {
+//             const check = localStorage.getItem("senderToken");
+//             resolve(check); // Resolve the promise with the value
+//         }, 1000);
+//     });
+// };
