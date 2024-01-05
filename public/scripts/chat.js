@@ -1,7 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', async function () {
-    const BASE_URL = "https://chat-service-fhbc.onrender.com";
-    // const BASE_URL = "http://localhost:3000";
+    // const BASE_URL = "https://chat-service-fhbc.onrender.com";
+    const BASE_URL = "http://localhost:3000";
 
     //Initializing all constiables
     const socket = io();
@@ -13,40 +13,41 @@ document.addEventListener('DOMContentLoaded', async function () {
     let senderToken;
     let receiverToken;
     let token = null
-
     const urlParams = new URLSearchParams(window.location.search);
     token = urlParams.get("roomId");
     console.log(token);
     userToken = token
 
+    // Function to send data using navigator.sendBeacon()
+    // function sendDataUsingFetch(userId) {
+    //     const data = JSON.stringify({ userId });
+    //     fetch(`${BASE_URL}/userLeave`, {
+    //         method: 'PUT',  // Change to PUT
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: data
+    //     })
+    //         .then(response => {
+    //             console.log('Data sent successfully (fetch)');
+    //         })
+    //         .catch(error => {
+    //             console.error('Error sending data (fetch):', error);
+    //         });
+    // }
 
-    const modal = document.getElementById('myModal');
-    const backBtn = document.getElementById('back_btn');
 
-    backBtn.addEventListener('click', (event) => {
-        modal.style.display = 'block';
-        event.preventDefault();
-    });
+    // // Event listener for beforeunload to trigger sending data using sendBeacon
+    // window.addEventListener('beforeunload', function (event) {
+    //     console.log("jhgfer");
+    //     console.log("jhgfer", performance.navigation.type);
+    //     if (performance.navigation.type === 1) {
+    //         console.log("refreshhhh");
+    //         return
+    //     } else if (performance.navigation.type === 0 || performance.navigation.type === 1 || performance.navigation.type === 2) {
+    //         console.log("gewr rtwedqfcv");
+    //         sendDataUsingFetch(token);
+    //     }
+    // });
 
-    document.getElementById('confirmBtn').addEventListener('click', async () => {
-        try {
-            await fetch(`${BASE_URL}/userLeave?userId=${senderToken}`, {
-                method: 'PUT', 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-
-            });
-        } catch (error) {
-            console.error('API call failed:', error);
-        }
-
-        modal.style.display = 'none';
-    });
-
-    document.getElementById('closeModalBtn').addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
 
 
     const getIPv4Addresses = async () => {
@@ -1018,6 +1019,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     // }
 
     locationOption.addEventListener("click", () => {
+        window.specificLinkClicked = true;
         window.location.href = '/map'
         console.log("Mapping....");
     })

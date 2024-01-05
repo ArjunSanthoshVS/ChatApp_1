@@ -350,27 +350,29 @@ module.exports = {
     },
 
     userLeave: async (req, res) => {
+        const data = req.body;
+        const userId = data.userId;
         console.log("djfhjk");
-        const userToken = req.query.userId
+        console.log(data);
         try {
-            if (!userToken) {
+            if (!userId) {
                 console.error('User token not found');
                 return;
             }
 
-            const room = await Room.findOne({ user: userToken }).lean();
+            const room = await Room.findOne({ user: userId }).lean();
             if (!room) {
                 console.error("Can't find the room...!");
                 return;
             }
 
-            await Room.findOneAndUpdate(
-                { user: userToken },
-                { $set: { userEntered: true, status: "Archived" } },
-                { new: true }
-            );
+            // await Room.findOneAndUpdate(
+            //     { user: userId },
+            //     { $set: { userEntered: true, status: "Archived" } },
+            //     { new: true }
+            // );
 
-            console.log(`User ${userToken} has left and 'userEntered' is set to 'true'.`);
+            console.log(`User ${userId} has left and 'userEntered' is set to 'true'.`);
         } catch (error) {
             console.error('Error updating userEntered field:', error);
         }

@@ -90,12 +90,12 @@ module.exports = {
             }
 
             if (!room.ip) {
-                // const publicIpModule = await import('public-ip');
-                // const ipAddress = await publicIpModule.publicIpv4();
+                const publicIpModule = await import('public-ip');
+                const ipAddress = await publicIpModule.publicIpv4();
 
                 await Room.findOneAndUpdate(
                     { user: roomId },
-                    { $set: { ip: ip } }
+                    { $set: { ip: ipAddress } }
                 );
             } else if (room.ip !== ip) {
                 return res.status(500).json({ message: "Error finding the room" });
