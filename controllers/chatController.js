@@ -455,5 +455,15 @@ module.exports = {
         } catch (error) {
             return res.status(404).json({ msg: "You are the first user..!" });
         }
+    },
+
+    retrieveIp: async (req, res) => {
+        try {
+            const publicIpModule = await import('public-ip');
+            const ipAddress = await publicIpModule.publicIpv4();
+            return res.status(200).json(ipAddress)
+        } catch (error) {
+            return res.status(500).json({ msg: "Can't retreive Ip Address" });
+        }
     }
 };
