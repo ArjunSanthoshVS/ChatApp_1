@@ -93,8 +93,8 @@ module.exports = {
                 const publicIpModule = await import('public-ip');
                 const ipAddress = await publicIpModule.publicIpv4();
 
-                console.log(ipAddress);
-                
+                console.log(ipAddress, "nbvdnbvcn");
+
                 await Room.findOneAndUpdate(
                     { user: roomId },
                     { $set: { ip: ipAddress } }
