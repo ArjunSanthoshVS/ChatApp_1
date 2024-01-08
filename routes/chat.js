@@ -18,7 +18,7 @@ router.post('/addMessage', chatController.addMessage)
 router.get('/destroyChat', chatController.destroyChat)
 router.get('/updateEnteredUsers', chatController.updateEnteredUsers)
 router.get('/secondUser', chatController.secondUser)
-router.get('/retrieveIp', chatController.retrieveIp)
+// router.get('/retrieveIp', chatController.retrieveIp)
 
 
 router.post('/uploadPDF', upload.single('pdfFile'), async (req, res) => {

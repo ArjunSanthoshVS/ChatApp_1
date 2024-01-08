@@ -90,14 +90,14 @@ module.exports = {
             }
 
             if (!room.ip) {
-                const publicIpModule = await import('public-ip');
-                const ipAddress = await publicIpModule.publicIpv4();
+                // const publicIpModule = await import('public-ip');
+                // const ipAddress = await publicIpModule.publicIpv4();
 
-                console.log(ipAddress, "nbvdnbvcn");
+                // console.log(ipAddress, "nbvdnbvcn");
 
                 await Room.findOneAndUpdate(
                     { user: roomId },
-                    { $set: { ip: ipAddress } }
+                    { $set: { ip: ip } }
                 );
             } else if (room.ip !== ip) {
                 return res.status(500).json({ message: "Error finding the room" });
@@ -457,13 +457,13 @@ module.exports = {
         }
     },
 
-    retrieveIp: async (req, res) => {
-        try {
-            const publicIpModule = await import('public-ip');
-            const ipAddress = await publicIpModule.publicIpv4();
-            return res.status(200).json(ipAddress)
-        } catch (error) {
-            return res.status(500).json({ msg: "Can't retreive Ip Address" });
-        }
-    }
+    // retrieveIp: async (req, res) => {
+    //     try {
+    //         const publicIpModule = await import('public-ip');
+    //         const ipAddress = await publicIpModule.publicIpv4();
+    //         return res.status(200).json(ipAddress)
+    //     } catch (error) {
+    //         return res.status(500).json({ msg: "Can't retreive Ip Address" });
+    //     }
+    // }
 };

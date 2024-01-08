@@ -59,22 +59,22 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 
 
-    // const getIPv4Addresses = async () => {
-    //     try {
-    //         const response = await fetch('https://api.ipify.org?format=json');
-    //         const data = await response.json();
-    //         return data.ip; // Return the IP address from the function
-    //     } catch (error) {
-    //         console.error('Error fetching IP address:', error);
-    //     }
-    // };
+    const getIPv4Addresses = async () => {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip; // Return the IP address from the function
+        } catch (error) {
+            console.error('Error fetching IP address:', error);
+        }
+    };
 
-    // const userIp = await getIPv4Addresses()
-    // console.log(userIp);
+    const userIp = await getIPv4Addresses()
+    console.log(userIp);
 
-    const serverIp = await fetch('/chat/retrieveIp');  // Call backend endpoint
-    const userIp = await serverIp.json();
-    console.log("User IP (from server):", userIp);
+    // const serverIp = await fetch('/chat/retrieveIp');  // Call backend endpoint
+    // const userIp = await serverIp.json();
+    // console.log("User IP (from server):", userIp);
 
     // fetching the fulll room details by using the url
     fetch(`${BASE_URL}/chat/roomDetails?roomId=${token}`)
