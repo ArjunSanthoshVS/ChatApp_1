@@ -1,9 +1,7 @@
-const BASE_URL = "http://localhost:3000"
-const token = localStorage.getItem("socketSender")
-let previousRoute;
+// const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://chat-service-fhbc.onrender.com";
 
-console.log(token);
-
+const token = localStorage.getItem("socketSender");
 
 function sendDataUsingFetch(userId) {
     const data = JSON.stringify({ userId });
@@ -20,33 +18,9 @@ function sendDataUsingFetch(userId) {
         });
 }
 
-
-
-window.addEventListener('load', () => {
-    previousRoute = window.location.href;
-});
-
-window.addEventListener('popstate', () => {
-    previousRoute = window.location.href;
-});
-
 window.addEventListener('beforeunload', function (event) {
-    const currentUrl = window.location.href;
-    const excludedRoutes = [
-        'http://localhost:3000/call',
-        'http://localhost:3000/map',
-        'http://localhost:3000/chat'
-    ];
-
-    console.log(currentUrl);
-    console.log(!excludedRoutes.some(route => currentUrl.startsWith(route)));
     console.log(performance.navigation.type);
-    console.log(previousRoute);
-
-    if (!excludedRoutes.some(route => currentUrl.startsWith(route)) &&
-        performance.navigation.type === 2 &&
-        (!previousRoute || !excludedRoutes.some(route => previousRoute.startsWith(route)))) {
-        console.log("gewr rtwedqfcv");
+    if (performance.navigation.type === 2) { // Check for back-navigation
         sendDataUsingFetch(token);
     }
 });

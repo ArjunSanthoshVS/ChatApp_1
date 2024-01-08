@@ -1,7 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', async function () {
-    // const BASE_URL = "https://chat-service-fhbc.onrender.com";
-    const BASE_URL = "http://localhost:3000";
+    const BASE_URL = "https://chat-service-fhbc.onrender.com";
+    // const BASE_URL = "http://localhost:3000";
 
     //Initializing all constiables
     const socket = io();
@@ -18,11 +18,15 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.log(token);
     userToken = token
 
+
+    
     // Function to send data using navigator.sendBeacon()
+    // let isInternalNavigation = false;
+
     // function sendDataUsingFetch(userId) {
     //     const data = JSON.stringify({ userId });
     //     fetch(`${BASE_URL}/userLeave`, {
-    //         method: 'PUT',  // Change to PUT
+    //         method: 'PUT',
     //         headers: { 'Content-Type': 'application/json' },
     //         body: data
     //     })
@@ -34,19 +38,24 @@ document.addEventListener('DOMContentLoaded', async function () {
     //         });
     // }
 
+    // Set flag for internal navigation
+    // window.addEventListener('click', function (event) {
+    //     const targetUrl = new URL(event.target.href);
+    //     const currentUrl = new URL(window.location.href);
+    //     if (targetUrl.hostname === currentUrl.hostname) {
+    //         isInternalNavigation = true;
+    //     } else {
+    //         isInternalNavigation = false;
+    //     }
+    // });
 
-    // // Event listener for beforeunload to trigger sending data using sendBeacon
     // window.addEventListener('beforeunload', function (event) {
-    //     console.log("jhgfer");
-    //     console.log("jhgfer", performance.navigation.type);
-    //     if (performance.navigation.type === 1) {
-    //         console.log("refreshhhh");
-    //         return
-    //     } else if (performance.navigation.type === 0 || performance.navigation.type === 1 || performance.navigation.type === 2) {
-    //         console.log("gewr rtwedqfcv");
+    //     if (!isInternalNavigation && performance.navigation.type === 2) {
     //         sendDataUsingFetch(token);
     //     }
     // });
+
+
 
 
 

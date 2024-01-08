@@ -366,11 +366,11 @@ module.exports = {
                 return;
             }
 
-            // await Room.findOneAndUpdate(
-            //     { user: userId },
-            //     { $set: { userEntered: true, status: "Archived" } },
-            //     { new: true }
-            // );
+            await Room.findOneAndUpdate(
+                { user: userId },
+                { $set: { userEntered: true, status: "Archived" } },
+                { new: true }
+            );
 
             console.log(`User ${userId} has left and 'userEntered' is set to 'true'.`);
         } catch (error) {
