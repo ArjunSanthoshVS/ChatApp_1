@@ -73,6 +73,6 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: JSON.stringify({ sender: senderToken, receiver: receiverToken, message: [lat, lng, accuracy] }),
         });
-        window.history.go(-1)
+        window.location.href = `${BASE_URL}/chat?roomId=${socketSender}`
     })
 })

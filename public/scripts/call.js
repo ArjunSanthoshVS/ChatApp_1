@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     let peer = new Peer();
     let myStream;
     let peerList = [];
-
+let room;
     const socketSender = localStorage.getItem("socketSender");
     const socketReceiver = localStorage.getItem("socketReceiver");
     const senderToken = localStorage.getItem("senderToken");
@@ -15,17 +15,24 @@ document.addEventListener('DOMContentLoaded', async function () {
     const isVideoCall = urlParams.has('video');
     let callId;
 
+    const endCall =document.getElementById('endCall')
+    endCall.addEventListener("click",()=>{
+        window.location.href=`${BASE_URL}/chat?roomId=${room}`
+    })
+
     if (isAudioCall) {
         callId =urlParams.get('audio')
         await audioInit(socketSender)
     } else {
         callId =urlParams.get('video')
         await init(socketSender);
+        
     }
 
     async function init(userId) {
         peer = new Peer(userId);
         peer.on('open', (id) => {
+            room=id
             console.log(id + " connected");
             // if (socketReceiver) {
             //     makeCall(socketReceiver);

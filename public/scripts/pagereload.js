@@ -2,6 +2,7 @@
 const BASE_URL = "https://chat-service-fhbc.onrender.com";
 
 const token = localStorage.getItem("socketSender");
+console.log(performance.navigation.type);
 
 function sendDataUsingFetch(userId) {
     const data = JSON.stringify({ userId });
@@ -19,8 +20,7 @@ function sendDataUsingFetch(userId) {
 }
 
 window.addEventListener('beforeunload', function (event) {
-    console.log(performance.navigation.type);
-    if (performance.navigation.type === 2) { // Check for back-navigation
+    if (performance.navigation.type === 2) {
         sendDataUsingFetch(token);
     }
 });

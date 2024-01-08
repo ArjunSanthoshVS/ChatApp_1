@@ -377,6 +377,7 @@ module.exports = {
             console.error('Error updating userEntered field:', error);
         }
     }
+    
 };
 
 const formattedTime = (timestamp) => {

@@ -15,20 +15,21 @@
     <script>
         const socket = io.connect('https://chat-service-fhbc.onrender.com');
     </script>
+
+    <script src="https://kit.fontawesome.com/e3ae8df40e.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
     <div id="CallBody" style="display:block;justify-content:space-around;margin:0px">
-
         <div class="primary-video" id="remoteVideo"></div>
         <div class="secondary-video" id="localVideo"></div>
-
+        <i class="fa-solid fa-circle-xmark" id="endCall" style="color: #ff7070;"></i>
     </div>
 
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <script src="scripts/call.js"></script>
     <script src="scripts/pagereload.js"></script>
-
 </body>
+
 
 </html>

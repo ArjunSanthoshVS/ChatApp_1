@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     userToken = token
 
 
-    
+
     // Function to send data using navigator.sendBeacon()
     // let isInternalNavigation = false;
 
@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             console.error('Error fetching IP address:', error);
         }
     };
+
     const userIp = await getIPv4Addresses()
     console.log(userIp);
 
@@ -105,7 +106,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                         console.log(data);
                         if (data.message) {
                             window.location.href = '/error'
-                        }
+                        }       
                         receiverToken = data?.room?.admin;
                         senderToken = data?.room?.user;
                         socketSender = data?.room?.user
@@ -1028,7 +1029,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     // }
 
     locationOption.addEventListener("click", () => {
-        window.specificLinkClicked = true;
         window.location.href = '/map'
         console.log("Mapping....");
     })
