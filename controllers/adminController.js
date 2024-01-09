@@ -349,35 +349,37 @@ module.exports = {
         }
     },
 
-    userLeave: async (req, res) => {
-        const data = req.body;
-        const userId = data.userId;
-        console.log("djfhjk");
-        console.log(data);
-        try {
-            if (!userId) {
-                console.error('User token not found');
-                return;
-            }
+    // userLeave: async (req, res) => {
+    //     const data = req.body;
+    //     const userId = data.userId;
+    //     console.log("djfhjk");
+    //     console.log(data);
+    //     try {
+    //         if (!userId) {
+    //             console.error('User token not found');
+    //             return;
+    //         }
 
-            const room = await Room.findOne({ user: userId }).lean();
-            if (!room) {
-                console.error("Can't find the room...!");
-                return;
-            }
+    //         const room = await Room.findOne({ user: userId }).lean();
+    //         if (!room) {
+    //             console.error("Can't find the room...!");
+    //             return;
+    //         }
 
-            await Room.findOneAndUpdate(
-                { user: userId },
-                { $set: { userEntered: true, status: "Archived" } },
-                { new: true }
-            );
+    //         setTimeout(() => {
 
-            console.log(`User ${userId} has left and 'userEntered' is set to 'true'.`);
-        } catch (error) {
-            console.error('Error updating userEntered field:', error);
-        }
-    }
-    
+    //         }, 5000)
+    //         // await Room.findOneAndUpdate(
+    //         //     { user: userId },
+    //         //     { $set: { userEntered: true, status: "Archived" } },
+    //         //     { new: true }
+    //         // );
+
+    //         console.log(`User ${userId} has left and 'userEntered' is set to 'true'.`);
+    //     } catch (error) {
+    //         console.error('Error updating userEntered field:', error);
+    //     }
+    // }
 };
 
 const formattedTime = (timestamp) => {

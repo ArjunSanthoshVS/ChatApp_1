@@ -6,7 +6,7 @@ console.log(performance.navigation.type);
 
 function sendDataUsingFetch(userId) {
     const data = JSON.stringify({ userId });
-    fetch(`${BASE_URL}/userLeave`, {
+    fetch(`${BASE_URL}/chat/userLeave`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: data
@@ -20,7 +20,14 @@ function sendDataUsingFetch(userId) {
 }
 
 window.addEventListener('beforeunload', function (event) {
-    if (performance.navigation.type === 2) {
-        sendDataUsingFetch(token);
-    }
+    // if (performance.navigation.type === 2) {
+    //     sendDataUsingFetch(token);
+    // }
+    sendDataUsingFetch(token)
 });
+
+// document.addEventListener('visibilitychange', function (event) {
+//     if (document.visibilityState === 'hidden') {
+//         sendDataUsingFetch(token);
+//     }
+// });

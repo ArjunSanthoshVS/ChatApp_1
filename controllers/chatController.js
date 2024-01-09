@@ -2,10 +2,12 @@ const { Chat } = require('../models/chatSchema');
 const { Member } = require('../models/memberSchema');
 const { Room } = require('../models/roomSchema');
 const socketHandler = require('../sockets/socketHandler');
+let lastRequestTime = Date.now();
 
 
 module.exports = {
     newUser: async (req, res) => {
+        lastRequestTime = Date.now();
         try {
             const roomId = req.query.roomId;
             const isRoomExisting = await Room.findOne({ user: roomId });
@@ -79,6 +81,7 @@ module.exports = {
     // },
 
     specificRoomOfUser: async (req, res) => {
+        lastRequestTime = Date.now();
         try {
             const roomId = req.query.roomId;
             const ip = req.query.ip;
@@ -146,6 +149,7 @@ module.exports = {
         }
     },
     addMessage: async (req, res) => {
+        lastRequestTime = Date.now();
         try {
             const { sender, receiver, message } = req.body;
             let dataField;
@@ -377,6 +381,7 @@ module.exports = {
     // },
 
     getAllMessage: async (req, res, next) => {
+        lastRequestTime = Date.now();
         try {
             const { from, to } = req.query;
             await Chat.updateMany({ receiver: from, sender: to, read: false }, { $set: { read: true } });
@@ -435,7 +440,55 @@ module.exports = {
         }
     },
 
+
+
+    userLeave: async (req, res) => {
+        const data = req.body;
+        const userId = data.userId;
+        console.log("djfhjk");
+        console.log(data);
+        try {
+            if (!userId) {
+                console.error('User token not found');
+                return;
+            }
+
+            const room = await Room.findOne({ user: userId }).lean();
+            if (!room) {
+                console.error("Can't find the room...!");
+                return;
+            }
+
+            setTimeout(() => {
+                const timeSinceLastRequest = Date.now() - lastRequestTime;
+                if (timeSinceLastRequest >= 5000) {
+                    // await Room.findOneAndUpdate(
+                    //     { user: userId },
+                    //     { $set: { userEntered: true, status: "Archived" } },
+                    //     { new: true }
+                    // );
+                    console.log(`User ${userId} has left and 'userEntered' is set to 'true'.`);
+                }
+            }, 4000);
+
+            // await Room.findOneAndUpdate(
+            //     { user: userId },
+            //     { $set: { userEntered: true, status: "Archived" } },
+            //     { new: true }
+            // );
+
+        } catch (error) {
+            console.error('Error updating userEntered field:', error);
+        }
+    },
+
+    getmap: async (req, res) => {
+        lastRequestTime = Date.now();
+        return res.status(200).json(true)
+    },
+
     secondUser: async (req, res) => {
+        lastRequestTime = Date.now();
         try {
             const type = req.query.type;
             const callId = req.query.callId;

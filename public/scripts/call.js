@@ -17,7 +17,7 @@ let room;
 
     const endCall =document.getElementById('endCall')
     endCall.addEventListener("click",()=>{
-        window.location.href=`${BASE_URL}/chat?roomId=${room}`
+       window.history.go(-1)
     })
 
     if (isAudioCall) {

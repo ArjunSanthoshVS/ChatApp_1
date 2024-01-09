@@ -17,6 +17,8 @@ router.get('/getAllMessage', chatController.getAllMessage)
 router.post('/addMessage', chatController.addMessage)
 router.get('/destroyChat', chatController.destroyChat)
 router.get('/updateEnteredUsers', chatController.updateEnteredUsers)
+router.put('/userLeave', chatController.userLeave);
+router.get('/getmap', chatController.getmap);
 router.get('/secondUser', chatController.secondUser)
 // router.get('/retrieveIp', chatController.retrieveIp)
 
