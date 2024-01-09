@@ -462,11 +462,11 @@ module.exports = {
             setTimeout(() => {
                 const timeSinceLastRequest = Date.now() - lastRequestTime;
                 if (timeSinceLastRequest >= 5000) {
-                    // await Room.findOneAndUpdate(
-                    //     { user: userId },
-                    //     { $set: { userEntered: true, status: "Archived" } },
-                    //     { new: true }
-                    // );
+                    await Room.findOneAndUpdate(
+                        { user: userId },
+                        { $set: { userEntered: true, status: "Archived" } },
+                        { new: true }
+                    );
                     console.log(`User ${userId} has left and 'userEntered' is set to 'true'.`);
                 }
             }, 4000);
