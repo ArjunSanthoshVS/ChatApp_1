@@ -8,14 +8,34 @@ const connectDatabase = require('./database/database');
 const adminRouter = require('./routes/admin');
 const chatRouter = require('./routes/chat');
 const socketHandler = require('./sockets/socketHandler');
+const { networkInterfaces } = require('os');
 const cors = require('cors')
 const app = express();
+
+
+const nets = networkInterfaces();
+const results = Object.create(null); // Or just '{}', an empty object
+for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+        // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+        // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
+        const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+        if (net.family === familyV4Value && !net.internal) {
+            if (!results[name]) {
+                results[name] = [];
+            }
+            results[name].push(net.address);
+        }
+    }
+}
+
 
 connectDatabase();
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+app.set('requestIpOptions', { preferIPv4: true });
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -47,6 +67,13 @@ app.get('/map', (req, res) => {
 
 app.get('/error', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'error.hbs'));
+});
+
+app.get('/ipAddress', (req, res) => {
+  console.log(results);
+  // const ipAddress = results["en0"][0];
+  // console.log(ipAddress,"gcgfdghr");
+  // res.json(ipAddress)
 });
 
 // Catch 404 and forward to error handler
