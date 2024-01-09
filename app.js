@@ -72,7 +72,7 @@ app.get('/error', (req, res) => {
 app.get('/ipAddress', (req, res) => {
   console.log(results);
   let ipAddress;
-  if (results.etho) {
+  if (results.eth0) {
     ipAddress = results.eth0[0]
   } else {
     ipAddress = results.Ethernet[0]
