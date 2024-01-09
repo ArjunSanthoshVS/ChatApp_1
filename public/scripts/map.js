@@ -23,41 +23,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let marker, circle, zoomed, lat, lng, accuracy;
 
+    navigator.geolocation.getCurrentPosition(success, error, {
+        enableHighAccuracy: true, // Optional: request high accuracy
+        timeout: 5000,            // Optional: set a timeout
+        prompt: "Would you like to allow this app to access your location?"
+    });
 
-    function isMobileView() {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
-
-
-    // navigator.geolocation.getCurrentPosition(success, error, {
-    //     enableHighAccuracy: true, // Optional: request high accuracy
-    //     timeout: 5000,            // Optional: set a timeout
-    //     prompt: "Would you like to allow this app to access your location?"
-    // });
-
-    function requestLocationPermission() {
-        navigator.geolocation.getCurrentPosition(
-          success,
-          error,
-          { enableHighAccuracy: true }
-        );
-      }
-
-    if (isMobileView()) {
-        navigator.permissions.query({ name: 'geolocation' })
-            .then(function (permissionStatus) {
-                if (permissionStatus.state !== 'granted') {
-                    requestLocationPermission();
-                } else {
-                    // Location access is already granted
-                    // Proceed with getting the user's location
-                }
-            });
-    }else{
-        requestLocationPermission()
-    }
-
-      
 
     function success(pos) {
 
@@ -110,5 +81,4 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         window.history.go(-1)
     })
-
 })
