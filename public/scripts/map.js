@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const BASE_URL = "https://chat-service-fhbc.onrender.com";
-    // const BASE_URL = "http://localhost:3000";
+    // const BASE_URL = "https://chat-service-fhbc.onrender.com";
+    const BASE_URL = "http://localhost:3000";
 
     const socket = io();
 
@@ -23,7 +23,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let marker, circle, zoomed, lat, lng, accuracy;
 
-    navigator.geolocation.getCurrentPosition(success, error);
+    navigator.geolocation.getCurrentPosition(success, error, {
+        enableHighAccuracy: true, // Optional: request high accuracy
+        timeout: 5000,            // Optional: set a timeout
+        prompt: "Would you like to allow this app to access your location?"
+    });
+
+
     function success(pos) {
 
         console.log(pos);
