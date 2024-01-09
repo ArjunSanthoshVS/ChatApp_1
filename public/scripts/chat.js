@@ -65,9 +65,9 @@ const getIPv4Addresses = async () => {
         // return data.ip; // Return the IP address from the function
 
         const response = await fetch('/ipAddress')
-        console.log(response);  
-        const data = await response.json()
-        console.log(data);
+        const ip = await response.json()
+        return ip
+
     } catch (error) {
         console.error('Error fetching IP address:', error);
     }
