@@ -459,7 +459,7 @@ module.exports = {
                 return;
             }
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 const timeSinceLastRequest = Date.now() - lastRequestTime;
                 if (timeSinceLastRequest >= 5000) {
                     await Room.findOneAndUpdate(
