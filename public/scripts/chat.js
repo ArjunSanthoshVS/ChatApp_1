@@ -60,13 +60,13 @@ userToken = token
 
 const getIPv4Addresses = async () => {
     try {
-        // const response = await fetch('https://api.ipify.org?format=json');
-        // const data = await response.json();
-        // return data.ip; // Return the IP address from the function
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip; 
 
-        const response = await fetch('/ipAddress')
-        const ip = await response.json()
-        return ip
+        // const response = await fetch('/ipAddress')
+        // const ip = await response.json()
+        // return ip
 
     } catch (error) {
         console.error('Error fetching IP address:', error);
